@@ -1,0 +1,89 @@
+kubeScheduler:
+    enabled: false
+kubeControllerManager:
+  enabled: false
+commonLabels:
+  prometheus: kube-prometheus
+prometheus: # You'll need to merge this block with the `prometheus` block in the next step.
+  prometheusSpec:
+    serviceMonitorSelector:
+      matchLabels:
+        prometheus: kube-prometheus  
+kubelet:
+  enabled: false
+prometheus:
+  additionalServiceMonitors:
+    - name: kubelet
+      endpoints:
+        - port: http-metrics
+          honorLabels: true
+          bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          relabelings:
+            - targetLabel: __address__
+              replacement: kubernetes.default.svc.cluster.local:443
+            - targetLabel: __scheme__
+              replacement: https
+            - sourceLabels:
+                - __meta_kubernetes_endpoint_address_target_name
+              targetLabel: __metrics_path__
+              regex: (.+)
+              replacement: /api/v1/nodes/${1}/proxy/metrics
+          tlsConfig:
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        - port: http-metrics
+          honorLabels: true
+          bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          relabelings:
+            - targetLabel: __address__
+              replacement: kubernetes.default.svc.cluster.local:443
+            - targetLabel: __scheme__
+              replacement: https
+            - sourceLabels:
+                - __meta_kubernetes_endpoint_address_target_name
+              targetLabel: __metrics_path__
+              regex: (.+)
+              replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+          tlsConfig:
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      jobLabel: k8s-app
+      namespaceSelector:
+        matchNames:
+          - kube-system
+      selector:
+        matchLabels:
+          k8s-app: kubelet
+    - name: user-prometheus
+      namespaceSelector:
+        any: true
+      selector:
+        matchLabels:
+          app: prometheus
+      endpoints:
+        - port: http
+          path: /federate
+          honorLabels: true
+          params:
+            match[]:
+              - '{__name__=~".+"}'
+alertmanager:
+  config:
+    global:
+      slack_api_url: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+    route:
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: default
+      routes:
+        - match:
+            alertname: DeadMansSwitch
+          repeat_interval: 5m
+          receiver: deadmansswitch
+    receivers:
+      - name: default
+        slack_configs:
+          - channel: my-team-alerts
+            send_resolved: true
+      - name: deadmansswitch 
+grafana:
+  adminPassword: p@ssw0rd   

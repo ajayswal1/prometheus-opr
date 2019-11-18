@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  namespace: monitoring
+  labels:
+    app: grafana
+    chart: grafana-4.0.2
+    heritage: tiller
+    release: cluster-monitoring
+
+spec:
+#  tls:
+#  - hosts:
+#    - monitoring.twc-oap-cluster.us-south.containers.appdomain.cloud
+#    secretName: grafana-general-tls
+  rules:
+  - host: monitoring.twc-oap-cluster.us-south.containers.appdomain.cloud
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: cluster-monitoring-grafana
+          servicePort: 80
+  #    - path: /
+  #      backend:
+  #        serviceName: cluster-monitoring-grafana-2
+  #        servicePort: 80
+  #

@@ -1,0 +1,62 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: frontend-app
+  labels:
+    app: frontend-app
+    release: prom 
+spec:
+  namespaceSelector:
+    any: true
+selector:
+  matchLabels:
+    app: frontens-app
+endpoints:
+- port: web
+  interval: 10s    
+
+# Depending on which DNS solution you have installed in your cluster enable the right exporter.
+coreDns:
+  enabled: false
+kubeDns:
+  enabled: true
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+
+#prometheus:
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+
+grafana:
+  adminPassword: admin
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+    hosts:
+      - monitoring.twc-oap-cluster.us-south.containers.appdomain.cloud
+#    tls:
+#     - secretName: grafana-general-tls
+#      hosts:
+#        - monitoring.twc-oap-cluster.us-south.containers.appdomain.cloud
+persistence:
+  enabled: true
+  accessModes: ["ReadWriteOnce"]
+
+
+
+

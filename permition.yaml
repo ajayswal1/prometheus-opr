@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pvc-permissions
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: pvc-permissions
+          image: busybox
+          command: ["chown", "-R", "65534:65534", "/mnt/prometheus"]
+          volumeMounts:
+            - name: prometheus
+              mountPath: /mnt/prometheus
+      volumes:
+        - name: prometheus
+          persistentVolumeClaim:
+            claimName: prometheus-prom-prometheus-operator-prometheus-db-prometheus-prom-prometheus-operator-prometheus-0
