@@ -63,10 +63,10 @@ grafana:
       kubernetes.io/tls-acme: "true"
     hosts:
       - monitoring.twc-oap-cluster.us-south.containers.appdomain.cloud
-#    tls:
-#     - secretName: grafana-general-tls
-#      hosts:
-#        - monitoring.twc-oap-cluster.us-south.containers.appdomain.cloud
+    tls:
+     - secretName: twc-oap-cluster #ibmcloud ks cluster get --cluster <cluster_name_or_ID> | grep Ingress
+      hosts:
+        - monitoring.twc-oap-cluster.us-south.containers.appdomain.cloud
 persistence:
   enabled: true
   accessModes: ["ReadWriteOnce"]
