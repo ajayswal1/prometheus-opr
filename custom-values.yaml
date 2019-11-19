@@ -55,7 +55,7 @@ securityContext:
       - peometheus.twc-oap-cluster.us-south.containers.appdomain.cloud
     tls:
       - secretName: twc-oap-cluster
-       hosts:
+      hosts:
          - peometheus.twc-oap-cluster.us-south.containers.appdomain.cloud  
 
 grafana:
@@ -69,7 +69,7 @@ grafana:
       - monitoring.twc-oap-cluster.us-south.containers.appdomain.cloud
     tls:
      - secretName: twc-oap-cluster #ibmcloud ks cluster get --cluster <cluster_name_or_ID> | grep Ingress
-      hosts:
+     hosts:
         - monitoring.twc-oap-cluster.us-south.containers.appdomain.cloud
 persistence:
   enabled: true
