@@ -22,29 +22,29 @@ kubeDns:
   enabled: true
 alertmanager:
   alertmanagerSpec:
-#    storage:
-#      volumeClaimTemplate:
-#        spec:
-#          storageClassName: ibmc-file-retain-bronze
-#          accessModes: ["ReadWriteOnce"]
-#          resources:
-#            requests:
-#              storage: 20Gi
+   storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ibmc-file-retain-bronze
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
 
 prometheus:
   prometheusSpec:
-#    storageSpec:
-#      volumeClaimTemplate:
-#        speci:
-#          storageClassName: ibmc-file-retain-bronze
-#          accessModes: ["ReadWriteOnce"]
-#          resources:
-#            requests:
-#              storage: 20Gi
-#securityContext:
-#  runAsNonRoot: false
-#  runAsUser: 0
-#  fsGroup: 0
+    storageSpec:
+      volumeClaimTemplate:
+        speci:
+          storageClassName: ibmc-file-retain-bronze
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+securityContext:
+  runAsNonRoot: false
+  runAsUser: 0
+  fsGroup: 0
 
   ingress:
     enabled: true
