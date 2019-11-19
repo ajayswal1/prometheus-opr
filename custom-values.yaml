@@ -52,7 +52,11 @@ securityContext:
       kubernetes.io/ingress.class: nginx
       kubernetes.io/tls-acme: "true"
     hosts:
-      - peometheus.twc-oap-cluster.us-south.containers.appdomain.cloud 
+      - peometheus.twc-oap-cluster.us-south.containers.appdomain.cloud
+    tls:
+      - secretName: twc-oap-cluster
+       hosts:
+         - peometheus.twc-oap-cluster.us-south.containers.appdomain.cloud  
 
 grafana:
   adminPassword: admin
